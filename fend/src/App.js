@@ -3,11 +3,12 @@ import React from 'react';
 import './App.css';
 
 import Login from './LogIn/Login'
+import ManufactureFactory from './ManufactureFactory/ManufactureFactory';
 import OperationCenter from './OperationCenter/OperationCenter';
 function App() {
     return(
       
-    <OperationCenter     /> 
+    <ManufactureFactory     /> 
 
 
 )

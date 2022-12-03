@@ -21,7 +21,7 @@ function Product() {
 return (
 
     <>
-    <Button variant="outline-warning" onClick={handleShowProduct}>+ Tạo tài khoản mới</Button>
+    <Button variant="outline-warning" onClick={handleShowProduct}>+ Tạo dòng sản phẩm mới</Button>
         <Modal show={showProduct} onHide={handleCloseProduct}>
         <Modal.Header closeButton>
           <Modal.Title>Tạo dòng sản phẩm mới</Modal.Title>
