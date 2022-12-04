@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Product from './Product';
 import './OperationCenter.css'
-import Mail from "./Mail";
+import Notify from "./Notify";
 import Account from './Account';
 function OperationCenter() {
     const [show, setShow] = useState(false)
@@ -45,7 +45,7 @@ function OperationCenter() {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto" >
-            <Nav.Link href="#email" onClick={showEmail}>Hòm Thư</Nav.Link>
+            <Nav.Link href="#email" onClick={showEmail}>Hộp Thông Báo</Nav.Link>
             <Nav.Link href="#product" onClick={showProduct}>Quản lý sản phẩm</Nav.Link>
             <Nav.Link href="#account" onClick={showAccount}>Quản lý tài khoản</Nav.Link>
           </Nav>
@@ -73,7 +73,7 @@ function OperationCenter() {
       </Navbar>
       <Container id='information'>
       {show1 && <Product   />}
-      {show2 && <Mail   />}
+      {show2 && <Notify   />}
       {show3 && <Account   />}
       </Container>
       </>

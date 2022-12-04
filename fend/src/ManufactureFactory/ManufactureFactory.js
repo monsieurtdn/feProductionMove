@@ -5,8 +5,9 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { NavDropdown } from 'react-bootstrap';
-import Mail from './Mail';
-import ProductStorage from './ProductStorage';
+import Notify from './Notify';
+import ProductStorage from './ProductStorage'; 
+import Statistic from './Statistic';
 function ManufactureFactory() {
 
     const [show, setShow] = useState(false)
@@ -21,8 +22,8 @@ function ManufactureFactory() {
 
     const [show3, setShow3] = useState(false)
 
-    const showEmail = () =>{setShow2(true) ; setShow1(false)  ; setShow3(false)}
-    const showAccount = () =>{setShow3(true) ; setShow1(false) ; setShow2(false)  }
+    const showNotify = () =>{setShow2(true) ; setShow1(false)  ; setShow3(false)}
+    const showStatistic = () =>{setShow3(true) ; setShow1(false) ; setShow2(false)  }
     const showProductStorage = () =>{setShow1(true) ; setShow2(false) ; setShow3(false)}
     const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false)}
     return(
@@ -41,13 +42,9 @@ function ManufactureFactory() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#email" onClick={showEmail}>Hòm Thư</Nav.Link>
+            <Nav.Link href="#notify" onClick={showNotify}>Hòm Thông báo</Nav.Link>
             <Nav.Link href="#product" onClick={showProductStorage}>Quản lý kho sản phẩm</Nav.Link>
-            <NavDropdown title="Tạo bảng Thống kê" id="basic-nav-dropdown">
-              <NavDropdown.Item href="#action/3.1" >Thống kê sản phẩm bán ra</NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.2">Thống kê trạng thái sản phẩm </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Thống kê sản phẩm lỗi </NavDropdown.Item>
-            </NavDropdown>
+            <Nav.Link href="#statistic" onClick={showStatistic}>Thống kê</Nav.Link>
           </Nav>
           <Nav>
             <Nav.Link onClick={handleShow}>Đăng xuất</Nav.Link>
@@ -71,8 +68,8 @@ function ManufactureFactory() {
         </Navbar>
               <Container id='information'>
               {show1 && <ProductStorage   />} 
-              {show2 && <Mail   />}
-              {/* {show3 && <Account   />} */}
+              {show2 && <Notify   />}
+              {show3 && <Statistic  />} 
               </Container>
               </>
     )
