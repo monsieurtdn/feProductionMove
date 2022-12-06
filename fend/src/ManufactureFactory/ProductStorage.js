@@ -5,6 +5,22 @@ import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 function ProductStorage() {
 
+    const data = [
+      { id: "Samsung galaxy 1",
+        date: "18/11/2022",
+        status: "Đã bán",
+        
+
+      }
+
+
+
+
+
+    ]
+
+
+
     const [showProductImport, setShowProductImport] = useState(false)
     const handleCloseProductImport = () =>setShowProductImport(false);
     const handleShowProductImport = () =>setShowProductImport(true);

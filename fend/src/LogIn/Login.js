@@ -6,8 +6,17 @@ import Button from 'react-bootstrap/Button';
 import {Row, Col} from 'react-bootstrap';
 import { Card, Container } from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
-
+import axios, { Axios } from 'axios';
+import { loginAPI } from '../Api/Auth';
 function Login(){
+     function handleLogin() {
+      let data = {
+        "email" : "admin@product.move.com",
+        "password" : "12345aA@"
+      }
+      let response=loginAPI(data)
+      console.log(response)
+    }
     const [validated, setValidated] = useState(false);
 
     const handleSubmit = (event) => {
@@ -59,7 +68,7 @@ function Login(){
       </Form.Group>
 
 
-        <Button variant="outline-primary" type="submit">
+        <Button variant="outline-primary"  onClick={handleLogin}>
         Đăng nhập
         </Button>
         </Form>

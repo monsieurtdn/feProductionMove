@@ -1,6 +1,7 @@
 
 import React from 'react';
 import './App.css';
+import AuThorizedDealer from './AuthorizedDealer/AuthorizedDealer';
 
 import Login from './LogIn/Login'
 import ManufactureFactory from './ManufactureFactory/ManufactureFactory';
@@ -8,7 +9,7 @@ import OperationCenter from './OperationCenter/OperationCenter';
 function App() {
     return(
       
-    <ManufactureFactory     /> 
+    <AuThorizedDealer    /> 
 
 
 )
