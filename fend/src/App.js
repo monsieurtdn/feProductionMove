@@ -1,18 +1,40 @@
 
 import React from 'react';
+import { useEffect } from 'react';
+import { useContext } from 'react';
+import { Route, Router, Routes } from 'react-router-dom';
 import './App.css';
 import AuThorizedDealer from './AuthorizedDealer/AuthorizedDealer';
-
+import Auth from './LogIn/Auth';
+import WarrantyCenter from './WarrantyCenter/WarrantyCenter';
 import Login from './LogIn/Login'
+import RequiredAuth from './LogIn/RequiredAuth';
 import ManufactureFactory from './ManufactureFactory/ManufactureFactory';
 import OperationCenter from './OperationCenter/OperationCenter';
+import { LOGIN_FAILED } from './store/Constant';
+import DataContext from './store/Context';
+import { useDataContext } from './store/hooks';
+import Notify from './WarrantyCenter/Notify';
 function App() {
-    return(
-      
-    <AuThorizedDealer    /> 
+  const { login, loginHandle } = useDataContext()
+  console.log(login)
+  useEffect(() => {console.log(login)}, [])
+  return (
+    <Routes>
+      <Route path='/Login' element={<Auth />}>
+        <Route path='/Login' element={<Login />} />
+      </Route>
+      <Route path='/' element={<RequiredAuth />}>
+        <Route path='/home' element={<OperationCenter />} />
+        {/* <Route path='/WarrantyCenter' element={<WarrantyCenter />} />
+        <Route path='/ManufactureFactory' element={<ManufactureFactory />} />
+        <Route path='/AuThorizedDealer' element={<AuThorizedDealer />} /> */}
+      </Route>
+    </Routes>
+    // <Login    /> 
 
 
-)
+  )
   // const [validated, setValidated] = useState(false);
 
   // const handleSubmit = (event) => {
@@ -25,13 +47,13 @@ function App() {
   //   setValidated(true);
   // };
   // return (
-    
+
   //   <>
   //   <div className='d-flex justify-content-center sm'>
   //   <img src='Logo.jpg' alt='Logo' ></img>
   //   </div> 
   //   <div className="Auth-form-container">
-    
+
   //   <form className="Auth-form">
   //     <div className="Auth-form-content">
   //       <h3 className="Auth-form-title">Sign In</h3>

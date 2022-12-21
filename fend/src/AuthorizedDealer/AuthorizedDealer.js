@@ -9,6 +9,7 @@ import ProductStorage from './ProductStorage';
 import SoldProduct from './SoldProduct';
 import Statistic from './Statistic';
 import Notify from './Notify';
+import axios from 'axios';
 function AuThorizedDealer() {
       const [show, setShow] = useState(false)
       const handleClose = () => setShow(false);
@@ -29,6 +30,36 @@ function AuThorizedDealer() {
       const showProductStorage = () =>{setShow1(true) ; setShow2(false) ; setShow3(false); setShow4(false)}
       const showSoldProduct = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(true)}
       const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(false)}
+      // const test = async() =>{
+        
+      //     let tokent;
+          
+      //     let request= {
+      //       "email": "admin@productmove.com",
+      //       "password": "12345aA@"
+      //     }
+
+      //     try{
+      //     let res = await axios.post('http://127.0.0.1:3000/api/v1/auth/login',request)
+
+      //     console.log(res.data.data['accessToken'])
+      //     tokent = `Bearer ${res.data.data['accessToken']}`;
+          
+      //   }catch {
+        
+      //   }
+
+      //   console.log(tokent)
+      //   try{
+      //     console.log(tokent)
+      //     axios.defaults.headers.common['Authorization'] = tokent;
+      //     let t = await axios.get('http://127.0.0.1:3000/api/v1/user/639f6f9efc779eea171da061')
+      //     console.log(t.data)
+      //   }catch(e){
+      //     console.log(e)
+      //   }
+        
+      // }
       return(
         <>
           <Navbar bg="warning" expand="lg">
@@ -51,7 +82,7 @@ function AuThorizedDealer() {
               <Nav.Link href="#statistic" onClick={showStatistic}>Thống kê</Nav.Link>
             </Nav>
             <Nav>
-              <Nav.Link onClick={handleShow}>Đăng xuất</Nav.Link>
+              <Nav.Link onClick={test}>Đăng xuất</Nav.Link>
               <Modal show={show} onHide={handleClose}>
                   <Modal.Header closeButton>
                   <Modal.Title>Đăng xuất</Modal.Title>

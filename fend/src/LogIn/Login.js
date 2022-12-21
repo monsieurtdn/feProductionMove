@@ -7,16 +7,44 @@ import {Row, Col} from 'react-bootstrap';
 import { Card, Container } from 'react-bootstrap';
 import FloatingLabel from 'react-bootstrap/FloatingLabel';
 import axios, { Axios } from 'axios';
-import { loginAPI } from '../Api/Auth';
+import { getUserAPI, loginAPI } from '../Api/Auth';
+import { useDataContext } from '../store/hooks';
+import { LOGIN_FAILED, LOGIN_SUCCESS } from '../store/Constant';
+import { useNavigate } from 'react-router-dom';
+import UpdateState from '../store/Reducer';
+import { useEffect } from 'react';
+
+
 function Login(){
-     function handleLogin() {
+      const {loginHandle} = useDataContext()
+
+      async function handleLogin() {
       let data = {
-        "email" : "admin@product.move.com",
-        "password" : "12345aA@"
+        "email" : document.getElementById('floatingInput').value,
+        "password" : document.getElementById('floatingPassword').value
       }
-      let response=loginAPI(data)
-      console.log(response)
+      const response= await loginAPI(data)
+      console.log(response.data["accessToken"])
+      console.log(response.data.user._id)
+      localStorage.setItem("accessToken",response.data["accessToken"])
+      localStorage.setItem("userId",response.data["user"]._id)
+      const response2 = await getUserAPI()
+      loginHandle({type: LOGIN_SUCCESS, payload: {user: response2.data}})
+      
+      
+      // console.log(document.getElementById('floatingInput').value)
+      // console.log(document.getElementById('floatingPassword').value)
+    
     }
+    
+    const navigate = useNavigate();
+
+    // async function Redirect() {
+    //   switch(DataState.user.role) {
+    //     case admin:
+    //       navigate("")
+    //   }
+    // }
     const [validated, setValidated] = useState(false);
 
     const handleSubmit = (event) => {
@@ -25,7 +53,7 @@ function Login(){
         event.preventDefault();
         event.stopPropagation();
       }
-  
+    
       setValidated(true);
     };
     return (

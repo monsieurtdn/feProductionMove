@@ -8,7 +8,16 @@ import { NavDropdown } from 'react-bootstrap';
 import Notify from './Notify';
 import ProductStorage from './ProductStorage'; 
 import Statistic from './Statistic';
+import { useDataContext } from '../store/hooks';
+import { LOGIN_FAILED } from '../store/Constant';
+
 function ManufactureFactory() {
+
+  const {loginHandle} = useDataContext()
+  let handleLogout = () => {
+    localStorage.clear()
+    loginHandle({type: LOGIN_FAILED})
+  }
 
     const [show, setShow] = useState(false)
     const handleClose = () => setShow(false);
@@ -50,18 +59,18 @@ function ManufactureFactory() {
             <Nav.Link onClick={handleShow}>Đăng xuất</Nav.Link>
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                <Modal.Title>Đăng xuất</Modal.Title>
+                  <Modal.Title>Đăng xuất</Modal.Title>
                 </Modal.Header>
-        <Modal.Body>Bạn thực sự muốn đăng xuất? </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" >
-            Có
-          </Button>
-          <Button variant="primary" onClick={handleClose}>
-            Không
-          </Button>
-        </Modal.Footer>
-      </Modal>
+                <Modal.Body>Bạn thực sự muốn đăng xuất? </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleLogout}>
+                    Có
+                  </Button>
+                  <Button variant="primary" onClick={handleClose}>
+                    Không
+                  </Button>
+                </Modal.Footer>
+            </Modal>
           </Nav>
         </Navbar.Collapse>
             </Container>
