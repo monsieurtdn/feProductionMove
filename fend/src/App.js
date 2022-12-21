@@ -25,10 +25,10 @@ function App() {
         <Route path='/Login' element={<Login />} />
       </Route>
       <Route path='/' element={<RequiredAuth />}>
-        <Route path='/home' element={<OperationCenter />} />
-        {/* <Route path='/WarrantyCenter' element={<WarrantyCenter />} />
+        <Route path='/OperationCenter' element={<OperationCenter />} />
+        <Route path='/WarrantyCenter' element={<WarrantyCenter />} />
         <Route path='/ManufactureFactory' element={<ManufactureFactory />} />
-        <Route path='/AuThorizedDealer' element={<AuThorizedDealer />} /> */}
+        <Route path='/AuThorizedDealer' element={<AuThorizedDealer />} /> 
       </Route>
     </Routes>
     // <Login    /> 

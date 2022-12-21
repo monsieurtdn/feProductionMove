@@ -21,4 +21,21 @@ async function getUserAPI() {
         return {'success':false,'error':e}
     }
 }
-export {loginAPI, getUserAPI}
+async function registerAPI(data) {
+    try {
+        console.log(config)
+        const response = await axios.post("http://127.0.0.1:3000/api/v1/admin/user", data, {
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+
+        console.log(response.data);
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+} 
+
+
+export {loginAPI, getUserAPI,registerAPI}

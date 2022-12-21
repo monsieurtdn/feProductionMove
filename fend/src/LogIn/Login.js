@@ -39,12 +39,7 @@ function Login(){
     
     const navigate = useNavigate();
 
-    // async function Redirect() {
-    //   switch(DataState.user.role) {
-    //     case admin:
-    //       navigate("")
-    //   }
-    // }
+
     const [validated, setValidated] = useState(false);
 
     const handleSubmit = (event) => {
