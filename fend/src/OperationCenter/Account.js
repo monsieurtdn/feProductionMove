@@ -4,8 +4,61 @@ import { Modal } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { useDataContext } from '../store/hooks';
-import {registerAPI} from '../Api/Auth';
+import {registerAPI, getAllAccountAPI} from '../Api/Auth';
 function Account () {
+
+  const getAllAccountHandle = useDataContext()
+  async function handleAllAccount() {
+
+    let tablehead = document.getElementById("head")
+    tablehead.innerHTML = " "
+    let row0 = document.createElement("tr")
+    let row1 = document.createElement("th")
+    let row2 = document.createElement("th")
+    let row3 = document.createElement("th")
+    let row4 = document.createElement("th")
+    let row5 = document.createElement("th")
+    let row6 = document.createElement("th")
+    row1.innerHTML = "STT";
+    row2.innerHTML = "Email";
+    row3.innerHTML = "Cơ sở";
+    row6.innerHTML = "SĐT";
+    row4.innerHTML = "Mã cơ quan";
+    row5.innerHTML = "Chi tiết";
+    row0.appendChild(row1)
+    row0.appendChild(row2)
+    row0.appendChild(row3)
+    row0.appendChild(row6)
+    row0.appendChild(row4)
+    row0.appendChild(row5)
+    tablehead.appendChild(row0)
+    const response2 = await getAllAccountAPI()
+    console.log(response2.data)
+    let tablebody = document.getElementById("allAccount")
+    tablebody.innerHTML = " "
+    response2.data.items.map((item,index) => {
+      let column = document.createElement("tr")
+      let column1 = document.createElement("td")
+      let column2 = document.createElement("td")
+      let column3 = document.createElement("td")
+      let column4 = document.createElement("td")
+      let column5 = document.createElement("td")
+      let column6 = document.createElement("td")
+      column1.innerHTML = index + 1 ;
+      column2.innerHTML = item.email;
+      column3.innerHTML = item.role;
+      column6.innerHTML = item.phoneNumber;
+      column4.innerHTML = item.name;
+      column.appendChild(column1)
+      column.appendChild(column2)
+      column.appendChild(column3)
+      column.appendChild(column6)
+      column.appendChild(column4)
+      column.appendChild(column5)
+      tablebody.appendChild(column)
+    })
+
+  }
 
     const {registerHandle} = useDataContext()
     async function handleRegister() {
@@ -130,17 +183,15 @@ function Account () {
           </Button>
         </Modal.Footer>
     </Modal>
+    <Button variant="outline-warning" onClick={handleAllAccount}>Xem danh sách tài khoản</Button>
 
     <Table striped bordered hover size="sm">
-    <thead>
-            <tr>
-                <th>STT</th>
-                <th>Loại tài khoản</th>
-                <th>Mã cơ quan</th>
-                <th>Địa chỉ email</th>
-                <th>Chi tiết</th>
-            </tr>
-        </thead>
+    <thead id = "head">
+
+    </thead>
+    <tbody id = "allAccount">
+
+    </tbody>
     </Table>
         </>
     )

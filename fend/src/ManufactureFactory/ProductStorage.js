@@ -3,27 +3,29 @@ import { useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
+import Select from 'react-select';
+import {getAllProductLineAPI} from '../Api/Auth';
 function ProductStorage() {
+    const [productLines,handle] = useState([]);
 
-    const data = [
-      { id: "Samsung galaxy 1",
-        date: "18/11/2022",
-        status: "Đã bán",
-        
-
-      }
-
-
-
-
-
-    ]
-
+    async function getAllProductLine() {
+    const response2 = await getAllProductLineAPI();
+     let res = [];
+    response2.data.items.map((item,index) => {
+      let mid = {
+        label : item.name,
+        value : item._id,
+      } 
+        res.push(mid)
+    })
+    console.log(res);
+    handle(res);
+    }
 
 
     const [showProductImport, setShowProductImport] = useState(false)
     const handleCloseProductImport = () =>setShowProductImport(false);
-    const handleShowProductImport = () =>setShowProductImport(true);
+    const handleShowProductImport = () =>{getAllProductLine();setShowProductImport(true)}
 
     const [showProductExport, setShowProductExport] = useState(false)
     const handleCloseProductExport = () =>setShowProductExport(false);
@@ -38,35 +40,50 @@ function ProductStorage() {
         }
     
     }
+    const [isClearable, setIsClearable] = useState(true);
+    const [isSearchable, setIsSearchable] = useState(true);
+    const [isRtl, setIsRtl] = useState(false);
 return (
 
     <>
     <Button variant="outline-warning" onClick={handleShowProductImport}>Nhập lô sản phẩm mới</Button>
         <Modal show={showProductImport} onHide={handleCloseProductImport}>
         <Modal.Header closeButton>
-          <Modal.Title>Nhập sản phẩm mới vào kho</Modal.Title>
+        <Modal.Title>Nhập sản phẩm mới vào kho</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-        <Form  onSubmit={handleSubmit}>
-        <Form.Group> 
-        <Form.Label>Mã sản phẩm</Form.Label>
-        <Form.Control   
-        required type = "text"
-        placeholder='Mã SP'
+        
+        <div>
+          <label>Tên dòng sản phẩm </label>
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            defaultValue={''}
+            isClearable={isClearable}
+            isRtl={isRtl}
+            isSearchable={isSearchable}
+            options={productLines}
+            placeholder='Tên dòng sản phẩm'
         />
-        </Form.Group>
+        </div>
 
-        <Form.Group> 
+        <Form  onSubmit={handleSubmit}>
+        {/* <Form.Group> 
         <Form.Label>Tên dòng sản phẩm</Form.Label>
-        <Form.Control   
-        type = "text"
-        placeholder='Tên dòng SP'
-        aria-label="Disabled input example"
-        disabled
-        readOnly
+        <div>
+        <Select
+        className="basic-single"
+        classNamePrefix="select"
+        defaultValue={''}
+        isClearable={isClearable}
+        isRtl={isRtl}
+        isSearchable={isSearchable}
+        name="color"
+        options={[]}
         />
-        </Form.Group>
+        </div>
+        </Form.Group> */}
 
         <Form.Group> 
         <Form.Label>Số lượng nhập vào</Form.Label>
@@ -83,7 +100,7 @@ return (
         />
         </Form.Group>
 
-        </Form>
+        </Form> 
         </Modal.Body>
 
 
