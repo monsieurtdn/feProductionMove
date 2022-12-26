@@ -1,6 +1,8 @@
 import axios from "axios";
 let config = {
+
     headers: {
+        
         'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
     }
 }
@@ -94,7 +96,70 @@ async function getAllAccountAPI() {
         return {'success':false,'error':e}
     }
 }
+async function createProducerStorageAPI(data) {
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/v1/producer/storage", data,{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
+async function getAllProducerStorageAPI() {
+    try {
+        const response = await axios.get("http://127.0.0.1:8000/api/v1/producer/storage",{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
+
+async function createProductAPI(data) {
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/v1/producer/product", data,{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
+
+async function getAllProductAPI() {
+    try {
+        const response = await axios.get("http://127.0.0.1:8000/api/v1/product",{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
+
+async function getProductDetailAPI(id) {
+    try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/v1/product/${id}`,{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
 
 
-
-export {loginAPI, getUserAPI,registerAPI,productLineAPI,updateUserInfoAPI,getAllProductLineAPI, getAllAccountAPI}
+export { loginAPI, getUserAPI,registerAPI,productLineAPI,updateUserInfoAPI,getAllProductLineAPI, getAllAccountAPI,
+        createProducerStorageAPI, getAllProducerStorageAPI, createProductAPI, getAllProductAPI, getProductDetailAPI}

@@ -73,6 +73,7 @@ function Account () {
       }
       const response = await registerAPI(data)
       console.log(response.data)
+
     }
 
 
