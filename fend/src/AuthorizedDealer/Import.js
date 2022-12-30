@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { Modal, Pagination } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
-import { getTransitionAPI, agencyImportAPI } from '../Api/Auth';
+import { getTransitionAPI, agencyImportAPI, receiveProductAPI } from '../Api/Auth';
 import Select from 'react-select';
 
 
 function Import() {
 
-    async function handleImport(id) {
+    async function handleImportNewProduct(id) {
         let data ={
           "transitionId": id
         }
@@ -17,6 +17,20 @@ function Import() {
       console.log(response.data)
       handleCloseConfirm()
     }
+    async function handleReceiveProduct(id) {
+      let data ={
+        "transitionId": id
+      }
+    const response = await receiveProductAPI(data)
+    console.log(response.data)
+    handleCloseConfirm()
+  }
+  function handleImport(id) {
+    let mid = sessionStorage.getItem("previousStatus");
+    if(mid == "warranty_done")handleReceiveProduct(id);
+    else{handleImportNewProduct(id)}
+  }
+
 
     async function getTransitionDetail() {
 
@@ -51,9 +65,11 @@ function Import() {
         let tablebody = document.getElementById("allSession")
         tablebody.innerHTML = " "
          response.data.items.map(async (item,index) => {
+
           let btn = document.createElement("button");
           btn.innerText = "Xác nhận"
           btn.addEventListener("click", (e) => {
+            sessionStorage.setItem("previousStatus", item.previousStatus)
             sessionStorage.setItem("transId", item._id)
             handleConfirm()
           })

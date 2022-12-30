@@ -6,13 +6,19 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Select from 'react-select';
-import { getProductDetailAPI, getAllProductAPI, getSoldProductAPI, receiveErrorProductAPI, getStorageDetailAPI} from '../Api/Auth';
+import { getProductDetailAPI, getAllProductAPI, getSoldProductAPI, receiveErrorProductAPI, getStorageDetailAPI,
+          returnWarrantiedProductAPI, returnNewProductAPI} from '../Api/Auth';
 
 function SoldProduct() {
 
-   
-
-
+    async function returnToCustomer() {
+      let data ={
+      "productId": sessionStorage.getItem("itemId")
+    }
+    const response = await  returnWarrantiedProductAPI(data)
+    console.log(response.data) 
+    handleCloseProductDetail()
+  }
     const [inputArray, setInputArray] = useState([1])
     function createTextbox() {
       setInputArray([...inputArray, 1])
@@ -100,6 +106,7 @@ function SoldProduct() {
     tablebody.innerHTML = " "
      response2.data.items.map(async (item,index) => {
       sessionStorage.setItem("itemId", item._id)
+      sessionStorage.setItem("itemPl", item.productLine._id)
       let btn = document.createElement("button");
       btn.innerText = "Chi tiết"
       btn.addEventListener("click", (e) => {
@@ -145,7 +152,7 @@ function SoldProduct() {
 
     useEffect( () => {
       async function getItems() {
-      const response = await getAllProductAPI()
+      const response = await getSoldProductAPI()
       if(response.success) {
         sessionStorage.setItem("allItems" ,response.data.totalItems)
         sessionStorage.setItem("page", `&page=1`)
@@ -220,13 +227,81 @@ function SoldProduct() {
           function summitProduct() {
             changeErrorDetail()
             receiveErrorProduct()
+            handleCloseErrorProduct()
           }
 
+          const [returnNew, setReturnNew] = useState(false);
+          const handleShowReturnNew = () => {setReturnNew(true);getAllAvailable()}
+          const handleCloseReturnNew = () => setReturnNew(false);
 
+          const [availables, handleAvailables] = useState([]);
+        async function getAllAvailable() {
+          sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}&productLineId=${sessionStorage.getItem("itemPl")}`)
+          const response2 = await getAllProductAPI();
+           let res = [];
+          response2.data.items.map((item,index) => {
+            let mid = {
+              label : item.name,
+              value : item._id,
+            } 
+              res.push(mid)
+          })
+          console.log(response2.data)
+          console.log(res);
+          handleAvailables(res);
+          }
+          const [idSp,setIdSp] = useState('')
+          const handleChangeSpId = (e) => {
+            setIdSp(e.value)
+          }
+
+          async function returnNewProduct() {
+            let data ={
+              "oldProductId" : sessionStorage.getItem("itemId"),
+              "newProductId" : idSp
+            }
+
+            const response = await returnNewProductAPI(data);
+            console.log(response.data)
+          }
 
     return (
 
     <>
+
+    <Modal show={returnNew} onHide={handleCloseReturnNew}>
+    <Modal.Header>
+       <Modal.Title> Gửi sản phẩm lỗi về đại lý </Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+      <div>
+          <label> Lựa chọn sản phẩm hoàn trả: </label>
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            defaultValue={''}
+            isClearable={isClearable}
+            isRtl={isRtl}
+            isSearchable={isSearchable}
+            options={availables}
+            placeholder='Tên kho'
+            onChange={handleChangeSpId}
+        />
+        </div>
+
+      </Modal.Body>
+
+      <Modal.Footer>
+            <Button variant="secondary" type="submit" onClick={returnNewProduct}>
+              Xác nhận
+            </Button>
+            <Button variant="primary" onClick={handleCloseReturnNew}>
+              Đóng
+            </Button>
+        </Modal.Footer>
+    </Modal>
+
 
     <Modal show={errorProduct} onHide={handleCloseErrorProduct}>
       <Modal.Header>
@@ -363,9 +438,19 @@ function SoldProduct() {
         </Modal.Body>
   
         <Modal.Footer>
-            <Button variant="secondary" type="submit" onClick={handleShowErrorProduct}>
+            <Button variant="secondary" type="submit" onClick={returnToCustomer} 
+            disabled={product.status !== "warranty_done"}>
+              Bàn giao sản phẩm đã bảo hành
+            </Button>
+
+            <Button variant="secondary" type="submit" onClick={handleShowErrorProduct} disabled = {product.status !== "sold" && product.status !== "return_consumer"}>
               Trả sản phẩm lỗi về đại lý
             </Button>
+
+            <Button variant="secondary" type="submit" onClick={handleShowReturnNew} disabled = {product.status == "sold" || product.status == "return_consumer"}>
+              Hoàn trả sản phẩm mới cho khách hàng
+            </Button>
+
             <Button variant="primary" onClick={handleCloseProductDetail}>
               Đóng
             </Button>

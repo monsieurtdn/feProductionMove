@@ -340,10 +340,48 @@ async function returnToAgencyAPI(data) {
         return {'success':false,'error':e}
     }
 }
+async function receiveProductAPI(data) {
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/v1/agency/receive-fixed-product", data,{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
+
+async function returnWarrantiedProductAPI(data) {
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/v1/agency/return-fixed-product", data,{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
+
+async function returnNewProductAPI(data) {
+    try {
+        const response = await axios.post("http://127.0.0.1:8000/api/v1/agency/return-new-product", data,{
+            headers: {
+                'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
+            }
+        })
+        return response.data
+    } catch(e) {
+        return {'success':false,'error':e}
+    }
+}
 
 export { loginAPI, getUserAPI,registerAPI,productLineAPI,updateUserInfoAPI,getAllProductLineAPI, getAllAccountAPI,
         createProducerStorageAPI, getStorageDetailAPI, createProductAPI, getAllProductAPI, getProductDetailAPI,
         exportProductAPI, createAgencyStorageAPI, deleteUserAPI, importProductAPI, getTransitionAPI, agencyImportAPI,
         handleCheckOutAPI, getSoldProductAPI, receiveErrorProductAPI, agencyToWarrantyAPI, warrantyCenterReceiceProductAPI,
-        getProductErrorAPI, getFixedDoneAPI, returnToAgencyAPI
+        getProductErrorAPI, getFixedDoneAPI, returnToAgencyAPI, receiveProductAPI, returnWarrantiedProductAPI, returnNewProductAPI
     }
