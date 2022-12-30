@@ -9,9 +9,9 @@ import UpdateState, { InitState } from "./Reducer";
 function DataProvider({children}) {
     const [login, loginHandle] = useReducer(UpdateState, InitState)
     const loadUser = async () => {
-         if (login.isLoggedIn) {
+         if (sessionStorage.getItem("userId")) {
             const response = await getUserAPI()
-            console.log(response.data);
+            console.log(window.location.pathname);
             if (response.data) {
                 loginHandle({
                     type: LOGIN_SUCCESS,

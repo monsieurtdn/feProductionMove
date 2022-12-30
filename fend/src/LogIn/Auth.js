@@ -8,11 +8,17 @@ import UpdateState from '../store/Reducer';
 
 const Auth = (props) => {
     
+
+
+
     let location = useLocation()
     const { children } = props
     const navigate = useNavigate()
     const { login: {isLoggedIn, user}, login, loginHandle } = useDataContext()
     let body
+
+    
+
     if (!isLoggedIn) {
         body = <Outlet />
     } else {

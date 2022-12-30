@@ -30,7 +30,7 @@ function Login(){
       console.log(response.data["accessToken"])
       console.log(response.data.user._id)
       localStorage.setItem("accessToken",response.data["accessToken"])
-      localStorage.setItem("userId",response.data["user"]._id)
+      sessionStorage.setItem("userId",response.data["user"]._id)
       const response2 = await getUserAPI()
       loginHandle({type: LOGIN_SUCCESS, payload: {user: response2.data}})
       

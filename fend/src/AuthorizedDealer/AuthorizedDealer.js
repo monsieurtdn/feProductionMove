@@ -8,12 +8,13 @@ import { NavDropdown } from 'react-bootstrap';
 import ProductStorage from './ProductStorage';
 import SoldProduct from './SoldProduct';
 import Statistic from './Statistic';
-import Notify from './Notify';
+import WarrantyProduct from './Warranty';
 import axios from 'axios';
 import { useDataContext } from '../store/hooks';
 import { LOGIN_FAILED } from '../store/Constant';
 import { updateUserInfoAPI } from '../Api/Auth';
 import { Form } from 'react-bootstrap';
+import Import from './Import';
 function AuThorizedDealer() {
 
     const {loginHandle} = useDataContext()
@@ -54,16 +55,18 @@ function AuThorizedDealer() {
   
       const [show2, setShow2] = useState(false)
   
-  
       const [show3, setShow3] = useState(false)
 
       const [show4, setShow4] = useState(false)
   
-      const showNotify = () =>{setShow2(true); setShow1(false); setShow3(false); setShow4(false)}
-      const showStatistic = () =>{setShow3(true) ; setShow1(false) ; setShow2(false); setShow4(false)}
-      const showProductStorage = () =>{setShow1(true) ; setShow2(false) ; setShow3(false); setShow4(false)}
-      const showSoldProduct = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(true)}
-      const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(false)}
+      const [show5, setShow5] = useState(false)
+
+      const showTransision = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(false); setShow5(true)}
+      const showNotify = () =>{setShow2(true); setShow1(false); setShow3(false); setShow4(false); setShow5(false)}
+      const showStatistic = () =>{setShow3(true) ; setShow1(false) ; setShow2(false); setShow4(false); setShow5(false)}
+      const showProductStorage = () =>{setShow1(true) ; setShow2(false) ; setShow3(false); setShow4(false); setShow5(false)}
+      const showSoldProduct = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(true); setShow5(false)}
+      const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false); setShow4(false); setShow5(false)}
 
       return(
         <>
@@ -81,10 +84,12 @@ function AuThorizedDealer() {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-              <Nav.Link href="#notify" onClick={showNotify}>Hòm Thông báo</Nav.Link>
+              <Nav.Link href="#notify" onClick={showNotify}>Quản lý bảo hành </Nav.Link>
+              <Nav.Link href="#import" onClick={showTransision}>Nhập sản phẩm</Nav.Link>
               <Nav.Link href="#product" onClick={showProductStorage}>Quản lý kho sản phẩm</Nav.Link>
-              <Nav.Link href="#sold" onClick={showSoldProduct}>Quản lý sản phẩm đã bán</Nav.Link>
+              <Nav.Link href="#sold" onClick={showSoldProduct}>Sản phẩm đã bán</Nav.Link>
               <Nav.Link href="#statistic" onClick={showStatistic}>Thống kê</Nav.Link>
+
             </Nav>
             <Nav>
 
@@ -183,9 +188,10 @@ function AuThorizedDealer() {
                 
                  */}
                 {show1 && <ProductStorage   />}
-                {show2 && <Notify   />}
+                {show2 && <WarrantyProduct   />}
                 {show3 && <Statistic  />} 
                 {show4 && <SoldProduct  />}
+                {show5&& <Import />}
                 </Container>
                 </>
     )

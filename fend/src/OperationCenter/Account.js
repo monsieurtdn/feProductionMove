@@ -4,10 +4,21 @@ import { Modal } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { useDataContext } from '../store/hooks';
-import {registerAPI, getAllAccountAPI} from '../Api/Auth';
+import {registerAPI, getAllAccountAPI, deleteUserAPI} from '../Api/Auth';
 function Account () {
+ const [allAcc, setAllAcc] = useState([]) 
+  const [acc, setAcc] = useState(null)
 
-  const getAllAccountHandle = useDataContext()
+  async function handleDeleteAccount(e) {
+    
+    const response = await deleteUserAPI(sessionStorage.getItem("id"))
+   console.log(response.data)
+  }
+
+  
+
+  localStorage.setItem("role", "")
+
   async function handleAllAccount() {
 
     let tablehead = document.getElementById("head")
@@ -35,8 +46,19 @@ function Account () {
     const response2 = await getAllAccountAPI()
     console.log(response2.data)
     let tablebody = document.getElementById("allAccount")
+    setAllAcc(response2.data.items)
     tablebody.innerHTML = " "
     response2.data.items.map((item,index) => {
+
+      let btn = document.createElement("button");
+      btn.innerText = "Xoá tài khoản"
+      btn.addEventListener("click", (e) => {
+        sessionStorage.setItem("id",item._id)
+        console.log(index)
+        handleShowDelAcc(index)
+
+      })
+
       let column = document.createElement("tr")
       let column1 = document.createElement("td")
       let column2 = document.createElement("td")
@@ -49,6 +71,7 @@ function Account () {
       column3.innerHTML = item.role;
       column6.innerHTML = item.phoneNumber;
       column4.innerHTML = item.name;
+      column5.appendChild(btn)
       column.appendChild(column1)
       column.appendChild(column2)
       column.appendChild(column3)
@@ -77,11 +100,19 @@ function Account () {
     }
 
 
-
+    const [deleteAccount, setDeleteAccount] = useState(false)
+    const  handleShowDelAcc = (id) => {
+      setAcc(id)
+      console.log(acc)
+      setDeleteAccount(true)
+    }
+    const  handleCloseDelAcc = () => setDeleteAccount(false)
 
     const [showAccount, setShowAccount] = useState(false)
     const handleCloseAccount = () =>setShowAccount(false);
     const handleShowAccount = () =>setShowAccount(true);
+
+    
 
     const [validated, setValidated] = useState(false);
     const handleSubmit = (event) => {
@@ -95,6 +126,27 @@ function Account () {
       };
     return(
         <>
+
+        <Modal show = {deleteAccount} onHide = {handleCloseDelAcc}>
+
+        <Modal.Header closeButton>
+          <Modal.Title>Xoá tài khoản</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          Bạn muốn xoá tài khoản này?
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button variant="primary" type="submit" id={acc?._id} onClick={handleDeleteAccount}>
+            Có
+          </Button>
+          <Button variant="secondary" onClick={handleCloseDelAcc}>
+            Không
+          </Button>
+        </Modal.Footer>
+        </Modal>
+
         <Button variant="outline-warning" onClick={handleShowAccount}>+ Tạo tài khoản mới</Button>
         <Modal show={showAccount} onHide={handleCloseAccount}>
         <Modal.Header closeButton>

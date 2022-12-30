@@ -14,7 +14,7 @@ import OperationCenter from './OperationCenter/OperationCenter';
 import { LOGIN_FAILED } from './store/Constant';
 import DataContext from './store/Context';
 import { useDataContext } from './store/hooks';
-import Notify from './WarrantyCenter/Notify';
+
 function App() {
   const { login, loginHandle } = useDataContext()
   console.log(login)

@@ -1,29 +1,65 @@
 import Button from 'react-bootstrap/Button';
 import { Component, useState } from 'react';
-import { Modal } from 'react-bootstrap';
+import { Modal, Pagination } from 'react-bootstrap';
 import { Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import Select from 'react-select';
-import {getAllProductLineAPI, createProducerStorageAPI, getAllProducerStorageAPI,
-        createProductAPI, getAllProductAPI, getProductDetailAPI} from '../Api/Auth';
-import HandleAllProduct from './handleAllProduct';
+import {getAllProductLineAPI, createProducerStorageAPI, getStorageDetailAPI,
+        createProductAPI, getAllProductAPI, getProductDetailAPI, getAllAccountAPI,
+        exportProductAPI} from '../Api/Auth';
+import { useEffect } from 'react';
+
+
 function ProductStorage () {
+  
+  localStorage.setItem("role", "?role=agency")
+  sessionStorage.setItem("page", "")
+  
+  let pages = Math.ceil(sessionStorage.getItem("allItems")/10);
 
-    const [showProductDetail, setshowProductDetail] = useState(false);
-    const handleShowProductDetail = () => setshowProductDetail(true);
-    const handleCloseProductDetail = () => setshowProductDetail(false);
 
-    const [product,setProduct] = useState({});
+  let choose = 1;
+
+  function loop() {
+    let pageArr = []
+    console.log(choose)
+  for( let i = 1; i <= pages; i++) {
+    pageArr.push(
+      <Pagination.Item key={i} active = {i == choose} onClick={getPage}>
+        {i}
+      </Pagination.Item>
+    )
+  }
+  setpgArr(pageArr)
+}
 
 
-    async function getProductDetail(id) {
-        const response = await getProductDetailAPI(id)
-        setProduct(response.data)
+  const [product,setProduct] = useState({});
+
+  let midproduct = {}
+
+  function transfer() {
+    setProduct(midproduct)
+  }
+
+    async function handleGetProductDetail(id) {
+      const response = await getProductDetailAPI(id);
+      midproduct = response.data
+      transfer()
+      console.log(midproduct)
+      console.log(product)
+      console.log(response.data)
     }
 
+
+
+
+
+
+
     async function getAllProduct() {
-
-
+      sessionStorage.setItem("export", JSON.stringify([]))
+  
     let tablehead = document.getElementById("head")
     tablehead.innerHTML = " "
     let row0 = document.createElement("tr")
@@ -46,8 +82,9 @@ function ProductStorage () {
     row0.appendChild(row5)
     row0.appendChild(row6)
     tablehead.appendChild(row0)
+    
+    sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}`)
     const response2 = await getAllProductAPI() 
-
     console.log(response2.data)
     let tablebody = document.getElementById("allProduct")
     tablebody.innerHTML = " "
@@ -55,10 +92,29 @@ function ProductStorage () {
       let btn = document.createElement("button");
       btn.innerText = "Chi tiết"
       btn.addEventListener("click", (e) => {
-        getProductDetail(item._id);
+         handleGetProductDetail(item._id)
+         if(product != NaN)
+          sessionStorage.setItem(`product${index}`, JSON.stringify(item) )
+         
+          const p = JSON.parse(sessionStorage.getItem(`product${index}`))
+          sessionStorage.setItem("pLineName",p.productLine.name)
+          sessionStorage.setItem("storageName",p.storage.name)
+          sessionStorage.setItem("price",p.productLine.price)
 
-        handleShowProductDetail();
-
+          handleShowProductDetail();
+      })
+      let checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.addEventListener("click", (e) => {
+        let arr = JSON.parse(sessionStorage.getItem("export"))
+        if(checkbox.checked) {
+            arr.push(item._id)
+        } else{
+         arr = arr.filter((id) => {
+            return id != item._id
+         })
+        }
+        sessionStorage.setItem("export", JSON.stringify(arr))
       })
       let column = document.createElement("tr")
       let column1 = document.createElement("td")
@@ -72,6 +128,7 @@ function ProductStorage () {
       column3.innerHTML = item.storage.name;
       column4.innerHTML = item.productLine.name;
       column5.innerHTML = item.productLine.price;
+      column1.appendChild(checkbox)
       column6.appendChild(btn)
       column.appendChild(column1)
       column.appendChild(column2)
@@ -81,8 +138,47 @@ function ProductStorage () {
       column.appendChild(column6)
       tablebody.appendChild(column)
     })
+    loop()
+    handleShowPage()
     }
 
+
+  useEffect( () => {
+    async function getItems() {
+    const response = await getAllProductAPI()
+    if(response.success) {
+      sessionStorage.setItem("allItems" ,response.data.totalItems)
+      sessionStorage.setItem("page", `&page=1`)
+    }
+  }
+  getItems()
+  },[])
+  const [pgArr, setpgArr] = useState([]);
+     function getPage(e) {
+        sessionStorage.setItem("page", `&page=${e.target.innerText}`)
+        if(e.target.innerText.length > 4 ) return;
+        choose = e.target.innerText
+        getAllProduct()
+      }
+
+      
+
+
+  const [showProductDetail, setshowProductDetail] = useState(false);
+  const handleShowProductDetail = () => {setshowProductDetail(true);}
+  const handleCloseProductDetail = () => setshowProductDetail(false);
+
+   const [showPage, setShowPage] = useState(false)
+    const handleShowPage = () => setShowPage(true);
+
+  const[quantity, setQuantity] = useState(0)
+
+  const handlequantity = (e) => {
+    setQuantity(e.target.value);
+    console.log(e.target.value)
+  }
+
+  
 
 
     async function handleCreateProduct() {
@@ -98,8 +194,22 @@ function ProductStorage () {
         "bodyBuild" : document.getElementById("bodyBuild").value,
         "batteryVolume" : document.getElementById("bVolume").value
       }
-      console.log(data)
+
+      for(let i = 0;i < quantity; i++) {
       const response = await createProductAPI(data)
+      console.log(response.data)
+      }
+    }
+
+    async function handleExportProduct() {
+      
+      let data = {
+        "agencyId": idAgency,
+        "agencyStorageId": idStrA,
+        "productIds": JSON.parse(sessionStorage.getItem("export"))
+      }
+      console.log(data)
+      const response = await exportProductAPI(data)
       console.log(response.data)
     }
 
@@ -115,6 +225,9 @@ function ProductStorage () {
 
     const [productLines,handle] = useState([]);
     const [storages, handleStr] = useState([]);
+    const [agencys, handleAgencys] = useState([]);
+    const [aStorages, handleAStorages] = useState([]);
+
     async function getAllProductLine() {
     const response2 = await getAllProductLineAPI();
      let res = [];
@@ -131,10 +244,34 @@ function ProductStorage () {
     const [idPl,setIdPl] = useState('')
     const handleChangePlId = (e) => {
       setIdPl(e.value)
+      
+
     }
 
+    async function getAllAgency() {
+      const response2 = await getAllAccountAPI();
+       let res = [];
+      response2.data.items.map((item,index) => {
+        let mid = {
+          label : item.name,
+          value : item._id,
+        } 
+          res.push(mid)
+      })
+      console.log(res);
+      handleAgencys(res);
+      }
+      const [idAgency,setIdAgency] = useState('')
+      const handleChangeIdAgency = (e) => {
+        setIdAgency(e.value)
+        sessionStorage.setItem("user", `?userId=${e.value}`)
+        getAllAgencyStorage()
+      }
+
     async function getAllStorage() {
-      const response2 = await getAllProducerStorageAPI();
+
+      localStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}`);
+      const response2 = await getStorageDetailAPI();
        let res = [];
       response2.data.items.map((item,index) => {
         let mid = {
@@ -150,7 +287,29 @@ function ProductStorage () {
       const [idStr,setIdStr] = useState('')
       const handleChangeStrId = (e) => {
         setIdStr(e.value)
+        sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}`);
+        getAllStorage()
       }
+
+      async function getAllAgencyStorage() {
+        console.log(idAgency)
+        const response2 = await getStorageDetailAPI();
+         let res = [];
+        response2.data.items.map((item,index) => {
+          let mid = {
+            label : item.name,
+            value : item._id,
+          } 
+            res.push(mid)
+        })
+        console.log(response2.data)
+        console.log(res);
+        handleAStorages(res);
+        }
+        const [idStrA,setIdStrA] = useState('')
+        const handleChangeAStrId = (e) => {
+          setIdStrA(e.value)
+        }
 
     const [showCreateStorage, setShowCreateStorage] = useState(false)
     const handleShowCreateStorage = () => setShowCreateStorage(true);
@@ -159,11 +318,15 @@ function ProductStorage () {
 
     const [showProductImport, setShowProductImport] = useState(false)
     const handleCloseProductImport = () =>setShowProductImport(false);
-    const handleShowProductImport = () =>{getAllProductLine();getAllStorage();setShowProductImport(true)}
+    const handleShowProductImport = () =>{
+      getAllProductLine();
+      localStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}`);
+      getAllStorage();
+      setShowProductImport(true)}
 
     const [showProductExport, setShowProductExport] = useState(false)
     const handleCloseProductExport = () =>setShowProductExport(false);
-    const handleShowProductExport = () =>setShowProductExport(true);
+    const handleShowProductExport = () =>{getAllAgency();getAllAgencyStorage();setShowProductExport(true);}
 
     const [validated, setValidated] = useState(false);
     const handleSubmit = (event) => {
@@ -177,9 +340,13 @@ function ProductStorage () {
     const [isClearable, setIsClearable] = useState(true);
     const [isSearchable, setIsSearchable] = useState(true);
     const [isRtl, setIsRtl] = useState(false);
+
+
 return (
 
     <>
+
+    <Button variant="outline-warning"  onClick={handleShowProductExport}>Xuất các sản phẩm được chọn tới đại lý </Button>
 
     <Button variant="outline-warning" onClick={handleShowCreateStorage}>+ Tạo kho sản phẩm mới</Button>
         <Modal show = {showCreateStorage} onHide = {handleCloseCreateStorage}>
@@ -339,6 +506,7 @@ return (
         <Form.Control   
         type = "text"
         placeholder='Số lượng sản phẩm nhập vào'
+        onChange={handlequantity}
         />
         </Form.Group>
 
@@ -356,66 +524,50 @@ return (
         </Modal.Footer>
     </Modal>
 
-    <Button variant="outline-warning" onClick={handleShowProductExport}>Xuất sản phẩm tới đại lý</Button>
+
         <Modal show={showProductExport} onHide={handleCloseProductExport}>
         <Modal.Header closeButton>
-          <Modal.Title>Xuất sản phẩm tới đại lý</Modal.Title>
+        <Modal.Title>Xuất sản phẩm tới đại lý</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-        <Form  onSubmit={handleSubmit}>
-        <Form.Group> 
-        <Form.Label>Mã sản phẩm</Form.Label>
-        <Form.Control   
-        required type = "text"
-        placeholder='Mã SP'
-        />
-        </Form.Group>
 
-        <Form.Group> 
-        <Form.Label>Tên dòng sản phẩm</Form.Label>
-        <Form.Control   
-        type = "text"
-        placeholder='Tên dòng SP'
-        aria-label="Disabled input example"
-        disabled
-        readOnly
+        <div>
+          <label>Tên đại lý </label>
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            defaultValue={''}
+            isClearable={isClearable}
+            isRtl={isRtl}
+            isSearchable={isSearchable}
+            options={agencys}
+            placeholder='Tên đại lý'
+            onChange={handleChangeIdAgency}
         />
-        </Form.Group>
+        </div>
 
-        <Form.Group> 
-        <Form.Label>Số lượng trong kho</Form.Label>
-        <Form.Control   
-        type = "text"
-        placeholder='Số lượng'
-        aria-label="Disabled input example"
-        disabled
-        readOnly
+        <div>
+          <label> Sản phẩm được lưu trữ tại kho: </label>
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            defaultValue={''}
+            isClearable={isClearable}
+            isRtl={isRtl}
+            isSearchable={isSearchable}
+            options={aStorages}
+            placeholder='Tên kho'
+            onChange={handleChangeAStrId}
         />
-        </Form.Group>
+        </div>
 
-        <Form.Group> 
-        <Form.Label>Số lượng lấy ra</Form.Label>
-        <Form.Control   
-        type = "text"
-        placeholder='Số lượng'
-        />
-        </Form.Group>
 
-        <Form.Group> 
-        <Form.Label>Mã đại lý nhận hàng </Form.Label>
-        <Form.Control   
-        type = "text"
-        placeholder='Mã đại lý'
-        />
-        </Form.Group>
-
-        </Form>
         </Modal.Body>
 
 
         <Modal.Footer>
-          <Button variant="primary" type="submit" >
+          <Button variant="primary" type="submit" onClick={handleExportProduct}>
             Có
           </Button>
           <Button variant="secondary" onClick={handleCloseProductExport}>
@@ -424,54 +576,53 @@ return (
         </Modal.Footer>
     </Modal>
 
-
-
     <Modal show= {showProductDetail} onHide = {handleCloseProductDetail}>
+        <Modal.Header>
+        <Modal.Title>Thông tin sản phẩm</Modal.Title>
+        </Modal.Header>
+  
+        <Modal.Body>
+        <div style={{padding: 1}}>
+           <h5 style={{display: "inline"}}>Dòng sản phẩm: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem("pLineName")}</h6> 
+        </div><br />
+        <div style={{padding: 1}}>
+           <h5 style={{display: "inline"}}>Vị trí: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem("storageName")}</h6> 
+        </div><br />
+        <div style={{padding: 1}}>
+          <h5 style={{display: "inline"}}>Tên sản phẩm </h5> <h6 style={{display: "inline"}}>{product.name}</h6>
+        </div><br />
+        <div style={{padding: 1}}>
+          <h5 style={{display: "inline"}}>Mô tả: </h5> <h6 style={{display: "inline"}}>{product.description}</h6>
+        </div><br />
+        <div style={{padding: 1}}>
+          <h5 style={{display: "inline"}}>Màu sắc: </h5> <h6 style={{display: "inline"}}>{product.color}</h6> 
+        </div> <br />
+        <div style={{padding: 1}}>
+          <h5 style={{display: "inline"}}>Kích thước: </h5> <h6 style={{display: "inline"}}>{product.displaySize} inch, {product.bodySize}</h6>
+        </div> <br />
+        <div style={{padding: 1}}>
+          <h5 style={{display: "inline"}}>Cân nặng: </h5> <h6 style={{display: "inline"}}>{product.weight} gram</h6>
+        </div> <br />
+        <div style={{padding: 1}}>
+           <h5 style={{display: "inline"}}>Đơn giá: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem("price")}</h6> 
+        </div> <br />
+        <div style={{padding: 1}}>
+          <h5 style={{display: "inline"}}>Tình trạng: </h5> <h6 style={{display: "inline"}}>{product.status}</h6>
+        </div> <br />
+        </Modal.Body>
+  
+        <Modal.Footer>
 
-      <Modal.Header>
-      <Modal.Title>Thông tin sản phẩm</Modal.Title>
-      </Modal.Header>
+            <Button variant="secondary" type="submit" >
+              Xoá sản phẩm
+            </Button>
+            <Button variant="primary" onClick={handleCloseProductDetail}>
+              Đóng
+            </Button>
+        </Modal.Footer>
+  
+      </Modal>
 
-      <Modal.Body>
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Dòng sản phẩm: </h5> <h6 style={{display: "inline"}}> {product.productLine.name}</h6>
-      </div><br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Vị trí: </h5> <h6 style={{display: "inline"}}>Kho {product.productLine.name}</h6>
-      </div><br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Tên sản phẩm </h5> <h6 style={{display: "inline"}}>{product.name}</h6>
-      </div><br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Mô tả: </h5> <h6 style={{display: "inline"}}>{product.description}</h6>
-      </div><br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Màu sắc: </h5> <h6 style={{display: "inline"}}>{product.color}</h6> 
-      </div> <br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Kích thước: </h5> <h6 style={{display: "inline"}}>{product.displaySize} inch, {product.bodySize}</h6>
-      </div> <br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Cân nặng: </h5> <h6 style={{display: "inline"}}>{product.weight} gram</h6>
-      </div> <br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Đơn giá: </h5> <h6 style={{display: "inline"}}>{product.productLine.price} VNĐ</h6>
-      </div> <br />
-      <div style={{padding: 1}}>
-        <h5 style={{display: "inline"}}>Tình trạng: </h5> <h6 style={{display: "inline"}}>{product.status}</h6>
-      </div> <br />
-      </Modal.Body>
-
-      <Modal.Footer>
-          <Button variant="secondary" type="submit" >
-            Xoá sản phẩm
-          </Button>
-          <Button variant="primary" onClick={handleCloseProductDetail}>
-            Đóng
-          </Button>
-      </Modal.Footer>
-
-    </Modal>
 
     <Table striped bordered hover size="sm">
         <thead id = "head">
@@ -482,6 +633,13 @@ return (
         </tbody>
     </Table>
 
+    <div>
+      { showPage &&
+    <Pagination >{pgArr}</Pagination>
+      }
+    <br />
+    
+    </div>
     </>
 
 )

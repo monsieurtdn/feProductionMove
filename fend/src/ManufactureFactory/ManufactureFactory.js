@@ -13,7 +13,7 @@ import { LOGIN_FAILED } from '../store/Constant';
 import { updateUserInfoAPI } from '../Api/Auth';
 import { Form } from 'react-bootstrap';
 function ManufactureFactory() {
-
+  
   const {loginHandle} = useDataContext()
   let handleLogout = () => {
     localStorage.clear()

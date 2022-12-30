@@ -8,6 +8,9 @@ import { useDataContext } from '../store/hooks';
 import { LOGIN_FAILED } from '../store/Constant';
 import { updateUserInfoAPI } from '../Api/Auth';
 import { Form } from 'react-bootstrap';
+import Import from './Import';
+import ProductStorage from './ProductStorage';
+import Statistic from './Statistic';
 
 function WarrantyCenter() {
 
@@ -37,15 +40,28 @@ function WarrantyCenter() {
     const closeUpdateAccount = () => setUpdateAccount(false)
 
 
+    const [show1, setShow1] = useState(false)
+
+
+    const [show2, setShow2] = useState(false)
+
+
+    const [show3, setShow3] = useState(false)
+
+    const showImport = () =>{setShow2(true) ; setShow1(false)  ; setShow3(false)}
+    const showStatistic = () =>{setShow3(true) ; setShow1(false) ; setShow2(false)  }
+    const showProductStorage = () =>{setShow1(true) ; setShow2(false) ; setShow3(false)}
+    const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false)}
 
     const [show, setShow] = useState(false);
     const handleClose = () =>setShow(false);
     const handleShow = () =>setShow(true);
+
     return(
       <>
         <Navbar bg="warning" expand="lg">
             <Container>
-            <Navbar.Brand href="#home">
+            <Navbar.Brand href="#home" onClick={clearAll}>
             <img
               src="Logo1.jpg"
               width="70"
@@ -57,9 +73,9 @@ function WarrantyCenter() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#email">Hòm Thư</Nav.Link>
-            <Nav.Link href="#product">Quản lý sản phẩm</Nav.Link>
-            <Nav.Link href="#statistic">Tạo bảng thống kê</Nav.Link>
+            <Nav.Link href="#import" onClick={showImport}>Quản lý vận chuyển</Nav.Link>
+            <Nav.Link href="#product" onClick={showProductStorage}>Quản lý sản phẩm</Nav.Link>
+            <Nav.Link href="#statistic" onClick={showStatistic}>Tạo bảng thống kê</Nav.Link>
           </Nav>
           <Nav>
 
@@ -152,6 +168,16 @@ function WarrantyCenter() {
         </Navbar.Collapse>
             </Container>
         </Navbar>
+
+        <Container id='information'>
+                {/*  
+                
+                
+                 */}
+                {show1 && <ProductStorage   />}
+                 {show2&& <Import />}
+                {show3 && <Statistic  />} 
+                </Container>
     </>
     )
 }

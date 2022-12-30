@@ -6,28 +6,41 @@ import Table from 'react-bootstrap/Table';
 import Row from 'react-bootstrap/Row';
 import Select from 'react-select';
 import Col from 'react-bootstrap/Col';
-import { createAgencyStorageAPI, getProductDetailAPI, getAllProductAPI, handleCheckOutAPI} from '../Api/Auth';
-function ProductStorage() {
-  sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}&status=in_agency`)
+import { getAllAccountAPI, getProductDetailAPI, getAllProductAPI, agencyToWarrantyAPI} from '../Api/Auth';
+
+function  WarrantyProduct() {
+  
+  sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}&status=need_warranty`)
   sessionStorage.setItem("page", "")
+  localStorage.setItem("role", "?role=warranty_center")
 
-  async function handleCheckOut() {
-      
-    let data = {
-      "customerName": document.getElementById("customerName").value,
-      "customerEmail": document.getElementById("customerEmail").value,
-      "customerPhone": document.getElementById("customerNumber").value,
-      "productIds": JSON.parse(sessionStorage.getItem("checkout"))
+
+
+  const [wCenters, handleWCenters] = useState([]);
+  async function getAllWarrantyCenter() {
+    const response2 = await getAllAccountAPI();
+     let res = [];
+    response2.data.items.map((item,index) => {
+      let mid = {
+        label : item.name,
+        value : item._id,
+      } 
+        res.push(mid)
+    })
+    console.log(res);
+    handleWCenters(res);
     }
-    console.log(data)
-    const response = await handleCheckOutAPI(data)
-    console.log(response.data)
-  }
+    const [idWCenter,setIdWCenter] = useState('')
+    const handleChangeIdWCenter = (e) => {
+      setIdWCenter(e.value)
+      sessionStorage.setItem("user", `?userId=${e.value}`)
+    }
 
-
+    const [isClearable, setIsClearable] = useState(true);
+    const [isSearchable, setIsSearchable] = useState(true);
+    const [isRtl, setIsRtl] = useState(false);
 
   let pages = Math.ceil(sessionStorage.getItem("allItems")/10);
-
 
   let choose = 1;
 
@@ -44,32 +57,6 @@ function ProductStorage() {
   setpgArr(pageArr)
 }
 
-
-  async function handleCreateStorage() {
-    let data = {
-
-      "name" : document.getElementById("name").value,
-      "address" : document.getElementById("address").value
-    }
-    const response = await createAgencyStorageAPI(data)
-    console.log(response.data)
-  }
-  const [storages, handleStr] = useState([]);
-
-
-
-  const [showCreateStorage, setShowCreateStorage] = useState(false)
-  const handleShowCreateStorage = () => setShowCreateStorage(true);
-  const handleCloseCreateStorage = () => setShowCreateStorage(false);
-
-  const [isClearable, setIsClearable] = useState(true);
-  const [isSearchable, setIsSearchable] = useState(true);
-  const [isRtl, setIsRtl] = useState(false);
-
-  
-  const [showProductDetail, setshowProductDetail] = useState(false);
-  const handleShowProductDetail = () => {setshowProductDetail(true);}
-  const handleCloseProductDetail = () => setshowProductDetail(false);
 
   const [product,setProduct] = useState({});
 
@@ -94,9 +81,13 @@ function ProductStorage() {
 
  }
 
+ const [showProductDetail, setshowProductDetail] = useState(false);
+ const handleShowProductDetail = () => {setshowProductDetail(true);}
+ const handleCloseProductDetail = () => setshowProductDetail(false);
+
   async function getAllProduct() {
 
-    sessionStorage.setItem("checkout", JSON.stringify([]))
+    sessionStorage.setItem("export", JSON.stringify([]))
     let tablehead = document.getElementById("head")
     tablehead.innerHTML = " "
     let row0 = document.createElement("tr")
@@ -110,7 +101,7 @@ function ProductStorage() {
     row2.innerHTML = "Tên SP";
     row3.innerHTML = "Thuộc kho";
     row4.innerHTML = "Dòng sản phẩm";
-    row5.innerHTML = "Giá tiền";
+    row5.innerHTML = "Tình trạng";
     row6.innerHTML = "Chi tiết";
     row0.appendChild(row1)
     row0.appendChild(row2)
@@ -142,7 +133,7 @@ function ProductStorage() {
       let checkbox = document.createElement("input");
       checkbox.type = "checkbox";
       checkbox.addEventListener("click", (e) => {
-        let arr = JSON.parse(sessionStorage.getItem("checkout"))
+        let arr = JSON.parse(sessionStorage.getItem("export"))
         if(checkbox.checked) {
             arr.push(item._id)
         } else{
@@ -150,7 +141,7 @@ function ProductStorage() {
             return id != item._id
          })
         }
-        sessionStorage.setItem("checkout", JSON.stringify(arr))
+        sessionStorage.setItem("export", JSON.stringify(arr))
       })
 
       let column = document.createElement("tr")
@@ -164,7 +155,7 @@ function ProductStorage() {
       column2.innerHTML = item.name;
       column3.innerHTML = item.storage.name;
       column4.innerHTML = item.productLine.name;
-      column5.innerHTML = item.productLine.price;
+      column5.innerHTML = item.status;
       column1.appendChild(checkbox)
       column6.appendChild(btn)
       column.appendChild(column1)
@@ -199,171 +190,75 @@ function ProductStorage() {
 
         const [showPage, setShowPage] = useState(false)
         const handleShowPage = () => setShowPage(true);
-    
 
-        const [showProductCheckout, setShowProductCheckout] = useState(false)
-        const handleCloseProductCheckOut = () => setShowProductCheckout(false);
-        const handleShowProductCheckOut = () => setShowProductCheckout(true);
+        async function handleSendProduct() {
+      
+          let data = {
+            "warrantyCenterId": idWCenter,
+            "productIds": JSON.parse(sessionStorage.getItem("export"))
+          }
+          console.log(data)
+          const response = await agencyToWarrantyAPI(data)
+          console.log(response.data)
+        }
 
+        const [sendToWCenter, setSendToWCenter] = useState(false)
+        const showSendToWCenter = () => {setSendToWCenter(true);getAllWarrantyCenter()}
+        const closeSendToWCenter = () => {setSendToWCenter(false)}
 
-  return (
-
-    
-
-
-    <>
-
-<Button variant="outline-warning" onClick={handleShowCreateStorage}>+ Tạo kho sản phẩm mới</Button>
-<Button variant="outline-warning" onClick={getAllProduct} >Quản lý sản phẩm</Button>
-<Button variant="outline-warning"  onClick={handleShowProductCheckOut}>Bán các sản phẩm được chọn </Button>
-
-
-<Modal show={showProductCheckout} onHide={handleCloseProductCheckOut}>
-
-        <Modal.Header closeButton>
-        <Modal.Title>Bán các sản phẩm được chọn</Modal.Title>
+    return(
+        <>
+        <Button variant="outline-warning" onClick={getAllProduct} >Quản lý sản phẩm</Button>
+        <Button variant="outline-warning" onClick={showSendToWCenter}>
+           Đưa các sản phẩm đã chon tới trung tâm bảo hành
+           </Button>
+        
+        <Modal show= {sendToWCenter} onHide = {closeSendToWCenter}>
+        
+        <Modal.Header>
+        <Modal.Title>Đưa sản phẩm lỗi tới trung tâm bảo hành</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
-
-          <Form>
-          <Form.Group> 
-            <Form.Label>Tên khách hàng</Form.Label>
-            <Form.Control   
-            type = "text"
-            placeholder='Họ và tên'
-            id='customerName'
-            />
-          </Form.Group>
-
-          <Form.Group> 
-            <Form.Label>Địa chỉ email khách hàng</Form.Label>
-            <Form.Control   
-            type = "text"
-            placeholder='Địa chỉ email'
-            id='customerEmail'
-            />
-            </Form.Group>
-
-            <Form.Group> 
-            <Form.Label>Số điện thoại khách hàng</Form.Label>
-            <Form.Control   
-            type = "text"
-            placeholder='SĐT'
-            id='customerNumber'
-            />
-            </Form.Group>
-
-          </Form>
-        </Modal.Body>
-
-
-        <Modal.Footer>
-          <Button variant="primary" type="submit" onClick={handleCheckOut}>
-            Có
-          </Button>
-          <Button variant="secondary" onClick={handleCloseProductCheckOut}>
-            Không
-          </Button>
-        </Modal.Footer>
-    </Modal>
-
-
-
-        <Modal show = {showCreateStorage} onHide = {handleCloseCreateStorage}>
-        <Modal.Header closeButton>
-          <Modal.Title>Khởi tạo kho sản phẩm</Modal.Title>
-        </Modal.Header>
-
-        <Modal.Body>
-          <Form>
-          <Form.Group> 
-            <Form.Label>Tên kho</Form.Label>
-            <Form.Control   
-            type = "text"
-            placeholder='Tên kho'
-            id='name'
-            />
-          </Form.Group>
-
-          <Form.Group> 
-            <Form.Label>Địa chỉ kho</Form.Label>
-            <Form.Control   
-            type = "text"
-            placeholder='Địa chỉ'
-            id='address'
-            />
-            </Form.Group>
-
-          </Form>
+        <div>
+          <label>Tên đại lý </label>
+          <Select
+            className="basic-single"
+            classNamePrefix="select"
+            defaultValue={''}
+            isClearable={isClearable}
+            isRtl={isRtl}
+            isSearchable={isSearchable}
+            options={wCenters}
+            placeholder='Tên đại lý'
+            onChange={handleChangeIdWCenter}
+        />
+        </div>
         </Modal.Body>
 
         <Modal.Footer>
-          <Button variant="primary" type="submit" onClick={handleCreateStorage}>
-            Xác nhận
-          </Button>
-          <Button variant="secondary" onClick={handleCloseCreateStorage}>
-            Huỷ bỏ
-          </Button>
+
+        <Button variant="primary" onClick={handleSendProduct}>
+              Xác nhận
+        </Button>
+
+        <Button variant="secondary" onClick={closeSendToWCenter}>
+              Đóng
+        </Button>
+
         </Modal.Footer>
+
         </Modal>
 
-    <Form>
-      <Row>
-        <Col>
-        <Form.Select aria-label="Default select example">
-          <option>Sắp xếp theo Dòng sản phẩm</option>
-          <option value="1">Từ A-Z</option>
-          <option value="2">Từ Z-A</option>
-        </Form.Select>
-        </Col>
 
-        <Col>
-        <Form.Select aria-label="Default select example">
-          <option>Sắp xếp theo ngày sản xuất</option>
-          <option value="1">Từ mới đến cũ</option>
-          <option value="2">Từ cũ đến mới</option>
-        </Form.Select>
-        </Col>
-      </Row>
-    </Form>
-
-    <Form>
-      <Row>
-        <Col>
-        <Form.Select aria-label="Default select example">
-          <option>Lọc sản phẩm theo trạng thái</option>
-          <option value="1">Tốt</option>
-          <option value="2">Cần bảo hành</option>
-          <option value="3">Trả về cơ sở sản xuất</option>
-          <option value="4">Bảo hành xong</option>
-        </Form.Select>
-        </Col>
-
-        <Col>
-        <Form.Group className="mb-3" controlId="formGroupEmail">
-          <Form.Control type="text" placeholder="Lọc sản phẩm theo nơi sản xuất" />
-        </Form.Group>
-        </Col>
-
-        <Col>
-        <Form.Group className="mb-3" controlId="formGroupEmail">
-          <Form.Control type="text" placeholder="Lọc sản phẩm ngày sản xuất" />
-        </Form.Group>
-        </Col>
-
-      </Row>
-    </Form>
-   
-    
-    <Modal show= {showProductDetail} onHide = {handleCloseProductDetail}>
+        <Modal show= {showProductDetail} onHide = {handleCloseProductDetail}>
         <Modal.Header>
         <Modal.Title>Thông tin sản phẩm</Modal.Title>
         </Modal.Header>
   
         <Modal.Body>
         <div style={{padding: 1}}>
-           <h5 style={{display: "inline"}}>Dòng sản phẩm: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem("pLineName")}</h6> 
+           <h5 style={{display: "inline" }}>Dòng sản phẩm: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem("pLineName")}</h6> 
         </div><br />
         <div style={{padding: 1}}>
            <h5 style={{display: "inline"}}>Vị trí: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem("storageName")}</h6> 
@@ -416,10 +311,8 @@ function ProductStorage() {
     <br />
     
     </div>
-
-    </>
-
-)
+        </>
+    )
 }
 
-export default ProductStorage
+export default WarrantyProduct
