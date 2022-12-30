@@ -9,7 +9,7 @@ let config = {
 async function  loginAPI(data) {
     try {
         const response = await axios.post("http://127.0.0.1:8000/api/v1/auth/login",data)
-        console.log(response.data)
+
         return response.data
     } catch (e){
         return {'success':false,'error':e}
@@ -29,14 +29,14 @@ async function getUserAPI() {
 }
 async function registerAPI(data) {
     try {
-        console.log(config)
+ 
         const response = await axios.post("http://127.0.0.1:8000/api/v1/admin/user", data, {
             headers: {
                 'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
             }
         })
 
-        console.log(response.data);
+
         return response.data
     } catch(e) {
         return {'success':false,'error':e}
@@ -45,14 +45,14 @@ async function registerAPI(data) {
 
 async function productLineAPI(data) {
     try {
-        console.log(config)
+
         const response = await axios.post("http://127.0.0.1:8000/api/v1/admin/product-line", data, {
             headers: {
                 'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
             }
         })
 
-        console.log(response.data);
+   
         return response.data
     } catch(e) {
         return {'success':false,'error':e}
@@ -66,7 +66,7 @@ async function updateUserInfoAPI(data) {
                 'Authorization' : `Bearer ${localStorage.getItem('accessToken')}`
             }
         })
-        console.log(response.data)
+
     } catch(e) {
         return {'success':false, 'error':e}
         }

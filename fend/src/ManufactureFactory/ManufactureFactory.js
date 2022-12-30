@@ -5,7 +5,6 @@ import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import { NavDropdown } from 'react-bootstrap';
-import Notify from './Notify';
 import ProductStorage from './ProductStorage'; 
 import Statistic from './Statistic';
 import { useDataContext } from '../store/hooks';
@@ -30,9 +29,9 @@ function ManufactureFactory() {
         "avatar" : document.getElementById('avatar').value,
         "password" : document.getElementById('newpassword').value
     }
-    console.log(data)
+
     const response = await updateUserInfoAPI(data)
-    console.log(response.data)
+
   }
 
     const [updateAccount, setUpdateAccount] = useState(false)
@@ -49,12 +48,12 @@ function ManufactureFactory() {
     const [show2, setShow2] = useState(false)
 
 
-    const [show3, setShow3] = useState(false)
 
-    const showNotify = () =>{setShow2(true) ; setShow1(false)  ; setShow3(false)}
-    const showStatistic = () =>{setShow3(true) ; setShow1(false) ; setShow2(false)  }
-    const showProductStorage = () =>{setShow1(true) ; setShow2(false) ; setShow3(false)}
-    const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false)}
+
+
+    const showStatistic = () =>{ setShow1(false) ; setShow2(true)  }
+    const showProductStorage = () =>{setShow1(true) ; setShow2(false) }
+    const clearAll = () =>{setShow1(false) ; setShow2(false) }
     return(
       <>
         <Navbar bg="warning" expand="lg">
@@ -71,7 +70,6 @@ function ManufactureFactory() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link href="#notify" onClick={showNotify}>Hòm Thông báo</Nav.Link>
             <Nav.Link href="#product" onClick={showProductStorage}>Quản lý kho sản phẩm</Nav.Link>
             <Nav.Link href="#statistic" onClick={showStatistic}>Thống kê</Nav.Link>
           </Nav>
@@ -168,8 +166,7 @@ function ManufactureFactory() {
         </Navbar>
               <Container id='information'>
               {show1 && <ProductStorage   />} 
-              {show2 && <Notify   />}
-              {show3 && <Statistic  />} 
+              {show2 && <Statistic  />} 
               </Container>
               </>
     )

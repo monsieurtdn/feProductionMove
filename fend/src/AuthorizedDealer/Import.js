@@ -14,16 +14,18 @@ function Import() {
           "transitionId": id
         }
       const response = await agencyImportAPI(data)
-      console.log(response.data)
+
       handleCloseConfirm()
+      getTransitionDetail()
     }
     async function handleReceiveProduct(id) {
       let data ={
         "transitionId": id
       }
     const response = await receiveProductAPI(data)
-    console.log(response.data)
+
     handleCloseConfirm()
+    getTransitionDetail()
   }
   function handleImport(id) {
     let mid = sessionStorage.getItem("previousStatus");
@@ -61,7 +63,7 @@ function Import() {
         tablehead.appendChild(row0)
         sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}`)
         const response = await getTransitionAPI()
-        console.log(response.data)
+
         let tablebody = document.getElementById("allSession")
         tablebody.innerHTML = " "
          response.data.items.map(async (item,index) => {

@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Product from './Product';
 import './OperationCenter.css'
-import Notify from "./Notify";
+
 import Account from './Account';
 import { useDataContext } from '../store/hooks';
 import { LOGIN_FAILED } from '../store/Constant';
@@ -31,9 +31,9 @@ function OperationCenter() {
           "avatar" : document.getElementById('avatar').value,
           "password" : document.getElementById('newpassword').value
       }
-      console.log(data)
+ 
       const response = await updateUserInfoAPI(data)
-      console.log(response.data)
+
     }
 
     const [updateAccount, setUpdateAccount] = useState(false)
@@ -52,16 +52,15 @@ function OperationCenter() {
 
     const [show3, setShow3] = useState(false)
 
-    const showEmail = () =>{setShow2(true) ; setShow1(false)  ; setShow3(false)}
-    const showAccount = () =>{setShow3(true) ; setShow1(false) ; setShow2(false)  }
-    const showProduct = () =>{setShow1(true) ; setShow2(false) ; setShow3(false)}
-    const clearAll = () =>{setShow1(false) ; setShow2(false) ; setShow3(false)}
+    const showAccount = () =>{setShow2(true) ; setShow1(false)   }
+    const showProduct = () =>{setShow1(true) ; setShow2(false)}
+    const clearAll = () =>{setShow1(false) ; setShow2(false)}
     return(
         <>
         <Navbar bg="warning" expand="lg" >
 
             <Container>
-
+      
             <Navbar.Brand href="#home" onClick={clearAll}>
             <img
               src="Logo1.jpg"
@@ -76,7 +75,6 @@ function OperationCenter() {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto" >
-            <Nav.Link href="#email" onClick={showEmail}>Hộp Thông Báo</Nav.Link>
             <Nav.Link href="#product" onClick={showProduct}>Quản lý sản phẩm</Nav.Link>
             <Nav.Link href="#account" onClick={showAccount}>Quản lý tài khoản</Nav.Link>
           </Nav>
@@ -176,8 +174,7 @@ function OperationCenter() {
       </Navbar>
       <Container id='information'>
       {show1 && <Product   />}
-      {show2 && <Notify   />}
-      {show3 && <Account   />}
+      {show2 && <Account   />}
       </Container>
       </>
     )

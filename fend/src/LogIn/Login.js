@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import React from 'react';
 //import 'LogIn./LogIn.css'
-import { Form } from 'react-bootstrap';
+import { Alert, Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import {Row, Col} from 'react-bootstrap';
 import { Card, Container } from 'react-bootstrap';
@@ -17,7 +17,11 @@ import { useEffect } from 'react';
 
 function Login(){
 
-      
+      function loginFail() {
+        return(<Alert variant='danger' >
+          Đăng nhập thất bại! Kiểm ra lại thông tin và thử lại!
+        </Alert>)
+      }
 
       const {loginHandle} = useDataContext()
 
@@ -27,16 +31,15 @@ function Login(){
         "password" : document.getElementById('floatingPassword').value
       }
       const response= await loginAPI(data)
-      console.log(response.data["accessToken"])
-      console.log(response.data.user._id)
+      if(response.success){
+        sessionStorage.setItem("LogIn",response.success)
       localStorage.setItem("accessToken",response.data["accessToken"])
       sessionStorage.setItem("userId",response.data["user"]._id)
       const response2 = await getUserAPI()
       loginHandle({type: LOGIN_SUCCESS, payload: {user: response2.data}})
-      
-      
-      // console.log(document.getElementById('floatingInput').value)
-      // console.log(document.getElementById('floatingPassword').value)
+      }
+      else{sessionStorage.setItem("LogIn",response.success)}
+
     
     }
     
@@ -54,13 +57,16 @@ function Login(){
     
       setValidated(true);
     };
+
     return (
         <>
         <div className='d-flex justify-content-center sm'>
         <img src='Logo.jpg' alt='Logo' ></img>
         </div> 
 
+        
         <Container fluid>
+      
 
 <Row className='d-flex justify-content-center align-items-center h-100'>
   <Col col='12'>
@@ -109,6 +115,7 @@ function Login(){
 </Row>
 
 </Container>
+
       </>
       );
 

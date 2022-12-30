@@ -14,7 +14,7 @@ function Product() {
         "price": document.getElementById('price').value
       }
     const response = await productLineAPI(data)
-    console.log(response.data)
+
     setShowProduct(false)
     handleAllProductLine()
     }
@@ -48,7 +48,7 @@ function Product() {
       row0.appendChild(row5)
       tablehead.appendChild(row0)
       const response2 = await getAllProductLineAPI()
-      console.log(response2.data)
+
       let tablebody = document.getElementById("AllProductLine")
       tablebody.innerHTML = " "
       response2.data.items.map((item,index) => {
@@ -104,7 +104,7 @@ return (
         </Form.Group>
 
         <Form.Group> 
-        <Form.Label>Giá tiền</Form.Label>
+        <Form.Label>Giá tiền (VNĐ)</Form.Label>
         <Form.Control   
         required type = "text"
         placeholder='Giá'

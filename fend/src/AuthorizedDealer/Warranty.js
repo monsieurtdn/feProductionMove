@@ -27,7 +27,7 @@ function  WarrantyProduct() {
       } 
         res.push(mid)
     })
-    console.log(res);
+
     handleWCenters(res);
     }
     const [idWCenter,setIdWCenter] = useState('')
@@ -46,7 +46,7 @@ function  WarrantyProduct() {
 
   function loop() {
     let pageArr = []
-    console.log(choose)
+
   for( let i = 1; i <= pages; i++) {
     pageArr.push(
       <Pagination.Item key={i} active = {i == choose} onClick={getPage}>
@@ -70,9 +70,6 @@ function  WarrantyProduct() {
     const response = await getProductDetailAPI(id);
     midproduct = response.data
     transfer()
-    console.log(midproduct)
-    console.log(product)
-    console.log(response.data)
   }
 
 
@@ -197,9 +194,10 @@ function  WarrantyProduct() {
             "warrantyCenterId": idWCenter,
             "productIds": JSON.parse(sessionStorage.getItem("export"))
           }
-          console.log(data)
+
           const response = await agencyToWarrantyAPI(data)
-          console.log(response.data)
+          closeSendToWCenter()
+          getAllProduct()
         }
 
         const [sendToWCenter, setSendToWCenter] = useState(false)

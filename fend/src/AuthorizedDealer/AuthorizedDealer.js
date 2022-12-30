@@ -34,9 +34,9 @@ function AuThorizedDealer() {
         "avatar" : document.getElementById('avatar').value,
         "password" : document.getElementById('newpassword').value
     }
-    console.log(data)
+
     const response = await updateUserInfoAPI(data)
-    console.log(response.data)
+
   }
 
     const [updateAccount, setUpdateAccount] = useState(false)

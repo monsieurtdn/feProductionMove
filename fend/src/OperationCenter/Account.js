@@ -12,7 +12,7 @@ function Account () {
   async function handleDeleteAccount(e) {
     
     const response = await deleteUserAPI(sessionStorage.getItem("id"))
-   console.log(response.data)
+
   }
 
   
@@ -44,7 +44,7 @@ function Account () {
     row0.appendChild(row5)
     tablehead.appendChild(row0)
     const response2 = await getAllAccountAPI()
-    console.log(response2.data)
+
     let tablebody = document.getElementById("allAccount")
     setAllAcc(response2.data.items)
     tablebody.innerHTML = " "
@@ -54,7 +54,7 @@ function Account () {
       btn.innerText = "Xoá tài khoản"
       btn.addEventListener("click", (e) => {
         sessionStorage.setItem("id",item._id)
-        console.log(index)
+
         handleShowDelAcc(index)
 
       })
@@ -95,15 +95,15 @@ function Account () {
         "avatar" : document.getElementById('avatar').value,
       }
       const response = await registerAPI(data)
-      console.log(response.data)
 
+      handleCloseAccount()
+      handleAllAccount()
     }
 
 
     const [deleteAccount, setDeleteAccount] = useState(false)
     const  handleShowDelAcc = (id) => {
       setAcc(id)
-      console.log(acc)
       setDeleteAccount(true)
     }
     const  handleCloseDelAcc = () => setDeleteAccount(false)

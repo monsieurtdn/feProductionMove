@@ -22,7 +22,6 @@ function ProductStorage () {
 
   function loop() {
     let pageArr = []
-    console.log(choose)
   for( let i = 1; i <= pages; i++) {
     pageArr.push(
       <Pagination.Item key={i} active = {i == choose} onClick={getPage}>
@@ -46,9 +45,7 @@ function ProductStorage () {
       const response = await getProductDetailAPI(id);
       midproduct = response.data
       transfer()
-      console.log(midproduct)
-      console.log(product)
-      console.log(response.data)
+
     }
 
 
@@ -85,7 +82,7 @@ function ProductStorage () {
     
     sessionStorage.setItem("user", `?userId=${sessionStorage.getItem("userId")}`)
     const response2 = await getAllProductAPI() 
-    console.log(response2.data)
+
     let tablebody = document.getElementById("allProduct")
     tablebody.innerHTML = " "
      response2.data.items.map(async (item,index) => {
@@ -175,7 +172,7 @@ function ProductStorage () {
 
   const handlequantity = (e) => {
     setQuantity(e.target.value);
-    console.log(e.target.value)
+
   }
 
   
@@ -197,8 +194,11 @@ function ProductStorage () {
 
       for(let i = 0;i < quantity; i++) {
       const response = await createProductAPI(data)
-      console.log(response.data)
+
       }
+      handleCloseProductImport()
+      sessionStorage.setItem("page", `&page=1`)
+      getAllProduct()
     }
 
     async function handleExportProduct() {
@@ -208,9 +208,11 @@ function ProductStorage () {
         "agencyStorageId": idStrA,
         "productIds": JSON.parse(sessionStorage.getItem("export"))
       }
-      console.log(data)
       const response = await exportProductAPI(data)
-      console.log(response.data)
+
+      handleCloseProductExport()
+      sessionStorage.setItem("page", `&page=1`)
+      getAllProduct()
     }
 
     async function handleCreateStorage() {
@@ -220,7 +222,8 @@ function ProductStorage () {
         "address" : document.getElementById("address").value
       }
       const response = await createProducerStorageAPI(data)
-      console.log(response.data)
+
+      handleCloseCreateStorage()
     }
 
     const [productLines,handle] = useState([]);
@@ -238,7 +241,7 @@ function ProductStorage () {
       } 
         res.push(mid)
     })
-    console.log(res);
+
     handle(res);
     }
     const [idPl,setIdPl] = useState('')
@@ -258,7 +261,7 @@ function ProductStorage () {
         } 
           res.push(mid)
       })
-      console.log(res);
+
       handleAgencys(res);
       }
       const [idAgency,setIdAgency] = useState('')
@@ -280,8 +283,7 @@ function ProductStorage () {
         } 
           res.push(mid)
       })
-      console.log(response2.data)
-      console.log(res);
+
       handleStr(res);
       }
       const [idStr,setIdStr] = useState('')
@@ -292,7 +294,7 @@ function ProductStorage () {
       }
 
       async function getAllAgencyStorage() {
-        console.log(idAgency)
+
         const response2 = await getStorageDetailAPI();
          let res = [];
         response2.data.items.map((item,index) => {
@@ -302,8 +304,7 @@ function ProductStorage () {
           } 
             res.push(mid)
         })
-        console.log(response2.data)
-        console.log(res);
+
         handleAStorages(res);
         }
         const [idStrA,setIdStrA] = useState('')
@@ -516,7 +517,7 @@ return (
 
         <Modal.Footer>
           <Button variant="primary" type="submit" onClick={handleCreateProduct}>
-            Có
+            Xác Nhận
           </Button>
           <Button variant="secondary" onClick={handleCloseProductImport}>
             Không

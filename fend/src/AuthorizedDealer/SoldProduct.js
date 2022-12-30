@@ -15,8 +15,7 @@ function SoldProduct() {
       let data ={
       "productId": sessionStorage.getItem("itemId")
     }
-    const response = await  returnWarrantiedProductAPI(data)
-    console.log(response.data) 
+    const response = await  returnWarrantiedProductAPI(data) 
     handleCloseProductDetail()
   }
     const [inputArray, setInputArray] = useState([1])
@@ -33,7 +32,7 @@ function SoldProduct() {
   
     function loop() {
       let pageArr = []
-      console.log(choose)
+
     for( let i = 1; i <= pages; i++) {
       pageArr.push(
         <Pagination.Item key={i} active = {i == choose} onClick={getPage}>
@@ -60,9 +59,6 @@ function SoldProduct() {
     const response = await getProductDetailAPI(id);
     midproduct = response.data
     transfer()
-    console.log(midproduct)
-    console.log(product)
-    console.log(response.data)
   }
 
 
@@ -88,7 +84,7 @@ function SoldProduct() {
     row2.innerHTML = "Tên SP";
     row3.innerHTML = "Tên Người mua";
     row4.innerHTML = "Thời điểm mua hàng";
-    row5.innerHTML = "Mã sản phẩm";
+    row5.innerHTML = "Tình trạng sản phẩm";
     row6.innerHTML = "Giá tiền";
     row7.innerHTML = "Chi tiết";
     row0.appendChild(row1)
@@ -101,15 +97,16 @@ function SoldProduct() {
     tablehead.appendChild(row0)
     
     const response2 = await getSoldProductAPI() 
-    console.log(response2.data)
+
     let tablebody = document.getElementById("allProduct")
     tablebody.innerHTML = " "
      response2.data.items.map(async (item,index) => {
       sessionStorage.setItem("itemId", item._id)
-      sessionStorage.setItem("itemPl", item.productLine._id)
+      
       let btn = document.createElement("button");
       btn.innerText = "Chi tiết"
       btn.addEventListener("click", (e) => {
+        sessionStorage.setItem("itemPl", item.productLine._id)
          getProductDetail(item._id)
          if(product != NaN)
           sessionStorage.setItem(`product${index}`, JSON.stringify(item) )
@@ -132,9 +129,9 @@ function SoldProduct() {
       let column7 = document.createElement("td")
       column1.innerHTML = index + 1 ;
       column2.innerHTML = item.name;
-      column3.innerHTML = item.name;
+      column3.innerHTML = item.order.customerName;
       column4.innerHTML = item.soldDate;
-      column5.innerHTML = item._id;
+      column5.innerHTML = item.status;
       column6.innerHTML = item.productLine.price;
       column7.appendChild(btn)
       column.appendChild(column1)
@@ -188,8 +185,7 @@ function SoldProduct() {
             } 
               res.push(mid)
           })
-          console.log(response2.data)
-          console.log(res);
+
           handleAStorages(res);
           }
           const [idStrA,setIdStrA] = useState('')
@@ -210,7 +206,7 @@ function SoldProduct() {
               )
             }
 
-            console.log(errorArray)
+
           }
 
           async function receiveErrorProduct() {
@@ -221,7 +217,7 @@ function SoldProduct() {
               "agencyStorageId" : idStrA
             }
             const response = await receiveErrorProductAPI(data);
-            console.log(response.data)
+
           }
 
           function summitProduct() {
@@ -246,8 +242,6 @@ function SoldProduct() {
             } 
               res.push(mid)
           })
-          console.log(response2.data)
-          console.log(res);
           handleAvailables(res);
           }
           const [idSp,setIdSp] = useState('')
@@ -262,7 +256,7 @@ function SoldProduct() {
             }
 
             const response = await returnNewProductAPI(data);
-            console.log(response.data)
+
           }
 
     return (

@@ -18,6 +18,8 @@ function ProductStorage() {
       "productIds": JSON.parse(sessionStorage.getItem("checkout"))
     }
     const response = await returnToAgencyAPI(data)
+    handleCloseReturnAgency();
+    getAllProduct()
   }
   const [agencys, handleAgencys] = useState([]);
   const [aStorages, handleAStorages] = useState([]);
@@ -32,7 +34,7 @@ function ProductStorage() {
       } 
         res.push(mid)
     })
-    console.log(res);
+
     handleAgencys(res);
     }
     const [idAgency,setIdAgency] = useState('')
@@ -43,7 +45,7 @@ function ProductStorage() {
     }
 
     async function getAllAgencyStorage() {
-      console.log(idAgency)
+
       const response2 = await getStorageDetailAPI();
        let res = [];
       response2.data.items.map((item,index) => {
@@ -53,8 +55,7 @@ function ProductStorage() {
         } 
           res.push(mid)
       })
-      console.log(response2.data)
-      console.log(res);
+
       handleAStorages(res);
       }
       const [idStrA,setIdStrA] = useState('')
@@ -74,7 +75,7 @@ function ProductStorage() {
 
   function loop() {
     let pageArr = []
-    console.log(choose)
+
   for( let i = 1; i <= pages; i++) {
     pageArr.push(
       <Pagination.Item key={i} active = {i == choose} onClick={getPage}>
@@ -90,6 +91,8 @@ const [showProductDetail, setshowProductDetail] = useState(false);
 
   const [product,setProduct] = useState({});
   const[errors,setErrors] = useState([])
+ 
+
   let midproduct = {}
 
   function transfer() {
@@ -97,14 +100,15 @@ const [showProductDetail, setshowProductDetail] = useState(false);
   }
 
   async function handleGetProductDetail(id) {
-    const response = await getProductDetailAPI(id);
     const response2 = await getProductErrorAPI(id);
-    setErrors(response2.data.items)
+    const response = await getProductDetailAPI(id);
+    
+    sessionStorage.setItem("error",JSON.stringify(response2.data.items))
+
+
     midproduct = response.data
     transfer()
-    console.log(midproduct)
-    console.log(product)
-    console.log(response2.data)
+
   }
 
 
@@ -143,23 +147,22 @@ const [showProductDetail, setshowProductDetail] = useState(false);
     tablehead.appendChild(row0)
     
     const response2 = await getAllProductAPI()
-    
+
     let tablebody = document.getElementById("allProduct")
     tablebody.innerHTML = " "
      response2.data.items.map(async (item,index) => {
-      sessionStorage.setItem("itemId",item._id) 
+      
       let btn = document.createElement("button");
       btn.innerText = "Chi tiết"
       btn.addEventListener("click", (e) => {
+        sessionStorage.setItem("itemId",item._id) 
         sessionStorage.setItem("fixed", JSON.stringify([]))
-         getProductDetail(item._id)
-         if(product != NaN)
+           getProductDetail(item._id)
+
+
           sessionStorage.setItem(`product${index}`, JSON.stringify(item) )
           const p = JSON.parse(sessionStorage.getItem(`product${index}`))
-          errors.map((item,index) =>{
-            sessionStorage.setItem(`error${index}`,item.description)
-            
-          })
+
           sessionStorage.setItem("pLineName",p.productLine.name)
           sessionStorage.setItem("price",p.productLine.price)
 
@@ -243,7 +246,9 @@ const [showProductDetail, setshowProductDetail] = useState(false);
               "errorReportIds": JSON.parse(sessionStorage.getItem("fixed"))
           }
             const response = await getFixedDoneAPI(data)
-            console.log(response.data)
+
+            handleCloseProductDetail()
+            getAllProduct()
         }
 
         
@@ -337,7 +342,7 @@ return (
         <div style={{padding: 1}}>
           <h5 style={{display: "inline"}}>Danh sách các lỗi: </h5> 
         </div> <br />
-        {errors.map((item,index) => {
+        {JSON.parse(sessionStorage.getItem("error"))?.map((item,index) => {
             
             return (<InputGroup className="mb-3" onChange={() =>{
               
@@ -354,7 +359,7 @@ return (
             }}>
               <InputGroup.Checkbox aria-label="Checkbox for following text input" id={`fix${index}`}/>
               <div style={{padding: 1}}>
-              <h5 style={{display: "inline"}}>Lỗi {index + 1}: </h5> <h6 style={{display: "inline"}}>{sessionStorage.getItem(`error${index}`)}</h6>
+              <h5 style={{display: "inline"}}>Lỗi {index + 1}: </h5> <h6 style={{display: "inline"}}>{item.description}</h6>
             </div> <br /></InputGroup>)
           })}
 

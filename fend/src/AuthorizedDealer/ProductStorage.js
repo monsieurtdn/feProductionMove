@@ -19,9 +19,11 @@ function ProductStorage() {
       "customerPhone": document.getElementById("customerNumber").value,
       "productIds": JSON.parse(sessionStorage.getItem("checkout"))
     }
-    console.log(data)
+
     const response = await handleCheckOutAPI(data)
-    console.log(response.data)
+
+    handleCloseProductCheckOut()
+    getAllProduct()
   }
 
 
@@ -33,7 +35,7 @@ function ProductStorage() {
 
   function loop() {
     let pageArr = []
-    console.log(choose)
+
   for( let i = 1; i <= pages; i++) {
     pageArr.push(
       <Pagination.Item key={i} active = {i == choose} onClick={getPage}>
@@ -52,7 +54,8 @@ function ProductStorage() {
       "address" : document.getElementById("address").value
     }
     const response = await createAgencyStorageAPI(data)
-    console.log(response.data)
+
+    handleCloseCreateStorage()
   }
   const [storages, handleStr] = useState([]);
 
@@ -83,9 +86,7 @@ function ProductStorage() {
     const response = await getProductDetailAPI(id);
     midproduct = response.data
     transfer()
-    console.log(midproduct)
-    console.log(product)
-    console.log(response.data)
+
   }
 
 
